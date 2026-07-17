@@ -1,17 +1,10 @@
 from google import genai
+
 from config import api_key
+from prompts import SYSTEM_PROMPT
+from history import add_message, build_prompt
 
-SYSTEM_PROMPT = """
-You are a senior placement mentor with 10+ years of experience.
-
-Rules:
-- Explain concepts simply.
-- Give interview examples.
-- Help students preparing for Data Science placements.
-- If the user makes a mistake, guide instead of directly giving the answer.
-"""
-
-history = []
+client = genai.Client(api_key=api_key)
 
 print("=" * 50)
 print("🤖 AI Placement Mentor")
@@ -19,29 +12,35 @@ print("Type 'exit' to quit")
 print("=" * 50)
 
 while True:
+
     user_input = input("\nYou: ")
 
     if user_input.lower() == "exit":
         print("Goodbye!")
         break
 
-    history.append(f"User: {user_input}")
+    # Store user message
+    add_message("user", user_input)
 
-    prompt = SYSTEM_PROMPT + "\n\n" + "\n".join(history)
+    # Build prompt using conversation history
+    prompt = build_prompt(SYSTEM_PROMPT)
 
     try:
+
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt
         )
 
         ai_response = response.text
+
         print("\nMentor:", ai_response)
-        history.append(f"Assistant: {ai_response}")
+
+        # Store assistant response
+        add_message("assistant", ai_response)
 
     except Exception as e:
-        print("\nERROR",e)
-
+        print("\nERROR:", e)
 
 
 
