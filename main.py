@@ -3,7 +3,9 @@ from google import genai
 from config import api_key
 from prompts import SYSTEM_PROMPT
 from history import add_message, build_prompt
+from utils import validate_input, safe_generate_response
 
+# Create Gemini client
 client = genai.Client(api_key=api_key)
 
 print("=" * 50)
@@ -13,34 +15,52 @@ print("=" * 50)
 
 while True:
 
+    # -----------------------------
+    # Take User Input
+    # -----------------------------
     user_input = input("\nYou: ")
 
     if user_input.lower() == "exit":
         print("Goodbye!")
         break
 
-    # Store user message
+    # -----------------------------
+    # Validate Input
+    # -----------------------------
+    valid, error = validate_input(user_input)
+
+    if not valid:
+        print(f"\n⚠ {error}")
+        continue
+
+    # -----------------------------
+    # Store User Message
+    # -----------------------------
     add_message("user", user_input)
 
-    # Build prompt using conversation history
+    # -----------------------------
+    # Build Prompt
+    # -----------------------------
     prompt = build_prompt(SYSTEM_PROMPT)
 
-    try:
+    # -----------------------------
+    # Generate Response
+    # -----------------------------
+    success, ai_response, error = safe_generate_response(
+        client,
+        "gemini-2.5-flash",
+        prompt
+    )
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+    # -----------------------------
+    # Handle Response
+    # -----------------------------
+    if success:
 
-        ai_response = response.text
+        print(f"\nMentor: {ai_response}")
 
-        print("\nMentor:", ai_response)
-
-        # Store assistant response
         add_message("assistant", ai_response)
 
-    except Exception as e:
-        print("\nERROR:", e)
+    else:
 
-
-
+        print(f"\nERROR: {error}")
