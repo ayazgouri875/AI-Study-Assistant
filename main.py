@@ -4,7 +4,9 @@ from config import api_key
 from prompts import SYSTEM_PROMPT
 from history import add_message, build_prompt
 from utils import validate_input, safe_generate_response
+from logger import logger
 
+logger.info("========== Application Started ==========")
 # Create Gemini client
 client = genai.Client(api_key=api_key)
 
@@ -18,9 +20,12 @@ while True:
     # -----------------------------
     # Take User Input
     # -----------------------------
+
     user_input = input("\nYou: ")
+    logger.info("User submitted a prompt.")
 
     if user_input.lower() == "exit":
+        logger.info("Application closed.")
         print("Goodbye!")
         break
 
@@ -43,6 +48,7 @@ while True:
     # -----------------------------
     prompt = build_prompt(SYSTEM_PROMPT)
 
+    logger.info("Prompt built successfully.")
     # -----------------------------
     # Generate Response
     # -----------------------------
@@ -51,6 +57,7 @@ while True:
         "gemini-2.5-flash",
         prompt
     )
+    logger.info("Gemini response generated.")
 
     # -----------------------------
     # Handle Response
@@ -64,3 +71,4 @@ while True:
     else:
 
         print(f"\nERROR: {error}")
+   
