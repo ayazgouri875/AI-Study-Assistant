@@ -1,8 +1,8 @@
 from google import genai
 
 from config import api_key, model_name
-from prompts import SYSTEM_PROMPT
-from history_manager import HistoryManager
+from prompt_manager import PromptManager
+from history import HistoryManager
 from validator import Validator
 from utils import safe_generate_response
 from logger import logger
@@ -16,6 +16,10 @@ client = genai.Client(api_key=api_key)
 
 history = HistoryManager()
 validator = Validator()
+prompt_manager = PromptManager()
+
+# Select chatbot role
+current_role = "placement"
 
 print("=" * 50)
 print("🤖 AI Placement Mentor")
@@ -51,9 +55,14 @@ while True:
     history.add_message("user", user_input)
 
     # -----------------------------------
-    # Build Prompt
+    # Get System Prompt
     # -----------------------------------
-    prompt = history.build_prompt(SYSTEM_PROMPT)
+    system_prompt = prompt_manager.get_prompt(current_role)
+
+    # -----------------------------------
+    # Build Final Prompt
+    # -----------------------------------
+    prompt = history.build_prompt(system_prompt)
 
     logger.info("Prompt built successfully.")
 
@@ -82,4 +91,3 @@ while True:
         logger.error(f"Response generation failed: {error}")
 
         print(f"\nERROR: {error}")
-   
