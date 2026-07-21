@@ -2,7 +2,8 @@ from google import genai
 
 from config import api_key
 from prompts import SYSTEM_PROMPT
-from history import add_message, build_prompt
+from history_manager import HistoryManager
+history = HistoryManager()
 from utils import validate_input, safe_generate_response
 from logger import logger
 
@@ -41,12 +42,12 @@ while True:
     # -----------------------------
     # Store User Message
     # -----------------------------
-    add_message("user", user_input)
+    history.add_message("user", user_input)
 
     # -----------------------------
     # Build Prompt
     # -----------------------------
-    prompt = build_prompt(SYSTEM_PROMPT)
+    prompt = history.build_prompt(SYSTEM_PROMPT)
 
     logger.info("Prompt built successfully.")
     # -----------------------------
@@ -66,7 +67,7 @@ while True:
 
         print(f"\nMentor: {ai_response}")
 
-        add_message("assistant", ai_response)
+        history.add_message("assistant", ai_response)
 
     else:
 

@@ -1,35 +1,30 @@
-# history.py
+# history_manager.py
 
-history = []
-
-
-def add_message(role, content):
+class HistoryManager:
     """
-    Add a message to the conversation history.
+    Manages conversation history for a single chat session.
     """
 
-    history.append({
-        "role": role,
-        "content": content
-    })
+    def __init__(self):
+        # Each object gets its own history
+        self.history = []
 
+    def add_message(self, role, content):
+        self.history.append({
+            "role": role,
+            "content": content
+        })
 
-def build_prompt(system_prompt):
-    """
-    Convert conversation history into a prompt for Gemini.
-    """
+    def build_prompt(self, system_prompt):
+        prompt = system_prompt + "\n\nConversation:\n"
 
-    prompt = system_prompt + "\n\nConversation:\n"
+        for message in self.history:
+            prompt += f"{message['role'].capitalize()}: {message['content']}\n"
 
-    for message in history:
-        prompt += f"{message['role'].capitalize()}: {message['content']}\n"
+        return prompt
 
-    return prompt
+    def clear(self):
+        self.history.clear()
 
-
-def clear_history():
-    """
-    Clear all stored messages.
-    """
-
-    history.clear()
+    def get_history(self):
+        return self.history
