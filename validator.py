@@ -1,5 +1,6 @@
-from logger import logger
+# Input Validation
 
+from logger import logger
 
 class Validator:
 

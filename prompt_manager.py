@@ -6,8 +6,9 @@ Responsibilities:
 2. Return the appropriate prompt based on chatbot role.
 """
 
-from logger import logger
+# Prompt Management
 
+from logger import logger
 
 class PromptManager:
 

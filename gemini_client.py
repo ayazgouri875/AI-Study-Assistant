@@ -2,6 +2,7 @@ from google import genai
 
 from logger import logger
 
+from ai_response import AIResponse
 
 class GeminiClient:
 
@@ -28,10 +29,16 @@ class GeminiClient:
 
             logger.info("Response generated successfully.")
 
-            return True, response.text, None
+            return AIResponse(
+             success=True,
+             text=response.text
+             )
 
         except Exception as e:
 
             logger.error(f"Gemini API Error: {e}")
 
-            return False, None, str(e)
+            return AIResponse(
+            success=False,
+            error=str(e)
+            )
