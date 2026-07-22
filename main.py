@@ -1,10 +1,8 @@
-from google import genai
-
+from gemini_client import GeminiClient
 from config import api_key, model_name
 from prompt_manager import PromptManager
 from history import HistoryManager
 from validator import Validator
-from utils import safe_generate_response
 from logger import logger
 
 # -----------------------------------
@@ -12,8 +10,7 @@ from logger import logger
 # -----------------------------------
 logger.info("========== Application Started ==========")
 
-client = genai.Client(api_key=api_key)
-
+gemini = GeminiClient(api_key)
 history = HistoryManager()
 validator = Validator()
 prompt_manager = PromptManager()
@@ -69,11 +66,10 @@ while True:
     # -----------------------------------
     # Generate Response
     # -----------------------------------
-    success, ai_response, error = safe_generate_response(
-        client,
-        model_name,
-        prompt
-    )
+    success, ai_response, error = gemini.generate_response(
+    model_name,
+    prompt
+)
 
     # -----------------------------------
     # Handle Response
